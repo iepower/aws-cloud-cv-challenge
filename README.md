@@ -78,6 +78,6 @@ def lambda_handler(event, context):
             'statusCode': 500,
             'body': json.dumps({'error': str(e)})
         }
-
+```
 ## Live Demo
 [https://cv.mypuhi.org](https://cv.mypuhi.org)
