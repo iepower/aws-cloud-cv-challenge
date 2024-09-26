@@ -6,9 +6,9 @@ This is my attempt at the cloud resume challenge in AWS. What is Cloud Resume Ch
 
 ## Architecture
 
-<!--
-![Architecture Diagram](path/here)
--->
+Here is the architecture for my Cloud Resume project:
+
+![Architecture Diagram](images/Architecture.png)
 
 ## Services Used:
 - **S3**
@@ -16,7 +16,7 @@ This is my attempt at the cloud resume challenge in AWS. What is Cloud Resume Ch
 - **Certificate Manager**
 - **AWS Lambda**
 - **DynamoDB**
-- **Route 53**
+- **Cloudflare**
 - **GitHub Actions**
 - **Terraform**
 
