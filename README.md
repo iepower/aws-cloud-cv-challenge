@@ -10,74 +10,20 @@ Here is the architecture for my Cloud Resume project:
 
 ![Architecture Diagram](images/Architecture.png)
 
-## Services Used:
-- **S3**
-- **AWS CloudFront**
-- **Certificate Manager**
-- **AWS Lambda**
-- **DynamoDB**
-- **Cloudflare**
-- **GitHub Actions**
-- **Terraform**
-### What is AWS Lambda?
-[AWS Lambda](https://aws.amazon.com/lambda/) is a serverless compute service that allows you to run code without provisioning or managing servers. You can use Lambda to run code in response to events such as HTTP requests, changes in data, or modifications to AWS services. This project uses AWS Lambda to interact with a DynamoDB table to store and update visitor counts for the resume page.
+## Key Features
 
-### Code Explanation
-The following Lambda function is written in Python. It connects to a DynamoDB table to update and return the view count for the webpage.
-Be aware and use YOUR values in the id and table name sections:
+- **Frontend:** A responsive resume website built with HTML, CSS, and JavaScript, hosted on an AWS S3 bucket with static website hosting and accelerated through AWS CloudFront for global content delivery.
+- **Serverless Backend:** An AWS Lambda function for implementing a visitor counter, integrated with DynamoDB to track page views.
+- **Infrastructure-as-Code:** Leveraged Terraform to automate the provisioning of cloud resources, including S3 buckets, Lambda functions, DynamoDB, CloudFront distributions, AWS Certificate Manager (ACM) for SSL/TLS, IAM roles and policies, and more.
+- **Secure DNS and Protection:** Used Cloudflare for domain registration, DNS management, proxying traffic, and applying Web Application Firewall (WAF) rules to protect the website from threats.
+- **CI/CD:** Automated deployment using GitHub Actions to build, test, and deploy the website and backend services, ensuring quick and reliable updates.
 
-```python
-import json
-import boto3
-from decimal import Decimal
-from botocore.exceptions import ClientError
+## Technologies Used
 
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('YOUR TABLE NAME')
+- **AWS Services:** S3, Lambda, DynamoDB, CloudFront, Certificate Manager (ACM), AWS Identity and Access Management (IAM)
+- **DevOps:** Terraform (Infrastructure as Code), GitHub Actions (CI/CD)
+- **Security and DNS:** Cloudflare Registrar, Cloudflare Proxy with Web Application Firewall (WAF), Github Secrets
+- **Frontend:** HTML, CSS, JavaScript
 
-# Utility function to convert Decimal types to int/float
-def decimal_to_int(obj):
-    if isinstance(obj, Decimal):
-        return int(obj) if obj % 1 == 0 else float(obj)
-    raise TypeError
-
-def lambda_handler(event, context):
-    try:
-        # Retrieve the current item
-        response = table.get_item(Key={'id': '0'})
-        
-        # Check if the item exists
-        if 'Item' in response:
-            views = response['Item'].get('views', 0)
-        else:
-            # If the item does not exist, initialize views to 0
-            views = 0
-        
-        # Increment the view count
-        views += 1
-        print(f"Updated views count: {views}")
-        
-        # Put the updated item back into the table
-        table.put_item(Item={'id': '0', 'views': views})
-        
-        # Return the result, converting the Decimal object to a regular number
-        return {
-            'statusCode': 200,
-            'body': json.dumps({'views': views}, default=decimal_to_int)
-        }
-        
-    except ClientError as e:
-        print(f"An error occurred: {e.response['Error']['Message']}")
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'error': e.response['Error']['Message']})
-        }
-    except Exception as e:
-        print(f"An unexpected error occurred: {str(e)}")
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'error': str(e)})
-        }
-```
 ## Live Demo
 [https://cv.mypuhi.org](https://cv.mypuhi.org)
